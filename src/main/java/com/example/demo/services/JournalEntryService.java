@@ -32,6 +32,8 @@ public class JournalEntryService {
         }
     }
 
+
+
     public List<JournalEntry> getAllDocument() {
         return journalEntryRepository.findAll();
     }
@@ -40,8 +42,27 @@ public class JournalEntryService {
         return journalEntryRepository.findById(myId);
     }
 
-    public void deleteDocumentById(String myId) {
+    public void deleteDocumentById(String myId, String userName) {
+        User user = userService.findByUserName(userName);
+        user.getJournalEntry().removeIf(x -> x.getId().toHexString().equals(myId));
+        userService.save(user);
         journalEntryRepository.deleteById(myId);
+    }
+
+    public Optional<JournalEntry> saveNewEntry(String id, JournalEntry updatedEntry) {
+        Optional<JournalEntry> existing = journalEntryRepository.findById(id);
+        if (existing.isPresent()) {
+            JournalEntry entry = existing.get();
+            if (updatedEntry.getTitle() != null) {
+                entry.setTitle(updatedEntry.getTitle());
+            }
+            if (updatedEntry.getContent() != null) {
+                entry.setContent(updatedEntry.getContent());
+            }
+            journalEntryRepository.save(entry);
+            return Optional.of(entry);
+        }
+        return Optional.empty();
     }
 
 }
