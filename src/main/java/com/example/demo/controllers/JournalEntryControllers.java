@@ -1,6 +1,5 @@
 package com.example.demo.controllers;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,7 +15,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.entity.JournalEntry;
+import com.example.demo.entity.User;
 import com.example.demo.services.JournalEntryService;
+import com.example.demo.services.UserService;
 
 @RestController
 @RequestMapping("/journal")
@@ -25,21 +26,14 @@ public class JournalEntryControllers {
     @Autowired
     private JournalEntryService journalEntryService;
 
+     @Autowired
+    private UserService userService;
+
     @GetMapping("/getAll")
     public List<JournalEntry> getAll() {
         return journalEntryService.getAllDocument();
     }
 
-    @PostMapping("/save")
-    public ResponseEntity<JournalEntry> saveEntry(@RequestBody JournalEntry myEntry) {
-        try {
-            myEntry.setDate(new Date());
-            journalEntryService.saveNewEntry(myEntry);
-            return new ResponseEntity<>(myEntry, HttpStatus.CREATED);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-    }
 
     @GetMapping("/id/{myId}")
     public ResponseEntity<JournalEntry> findDocumentById(@PathVariable String myId) {
@@ -55,5 +49,30 @@ public class JournalEntryControllers {
         journalEntryService.deleteDocumentById(myId);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @GetMapping("/getUserJournal/{userName}")
+    public ResponseEntity<?> getAllJournalEntriesOfUser(@PathVariable String userName){
+        User user = userService.findByUserName(userName);
+        List<JournalEntry> all = user.getJournalEntry();
+
+        if (all != null && !all.isEmpty()) {
+            return new ResponseEntity<>(all, HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+
+
+    @PostMapping("/createNewJournal/{userName}")
+    public ResponseEntity<JournalEntry> saveEntry(@RequestBody JournalEntry myEntry,@PathVariable String userName) {
+        try {
+           
+            journalEntryService.saveNewEntry(myEntry, userName);
+            return new ResponseEntity<>(myEntry, HttpStatus.CREATED);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 }
