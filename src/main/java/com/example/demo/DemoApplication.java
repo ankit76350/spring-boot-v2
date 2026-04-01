@@ -17,7 +17,7 @@ public class DemoApplication {
 	}
 
 	@Bean
-	public PlatformTransactionManager add(MongoDatabaseFactory dbFactory){
+	public PlatformTransactionManager transactionManager_Falana(MongoDatabaseFactory dbFactory){
 		return new MongoTransactionManager(dbFactory);
 	}
 

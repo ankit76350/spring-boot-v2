@@ -28,7 +28,7 @@ public class JournalEntryService {
             entry.setDate(new Date());
             JournalEntry saved = journalEntryRepository.save(entry);
             user.getJournalEntry().add(saved);
-            user.setUserName(null);
+            // user.setUserName(null);
             userService.save(user);
         } catch (Exception e) {
             System.out.println(e);
