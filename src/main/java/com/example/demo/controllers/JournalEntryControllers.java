@@ -43,7 +43,7 @@ public class JournalEntryControllers {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userName = authentication.getName();
         User user = userService.findByUserName(userName);
-        //find if the id exist in the user
+        // find if the id exist in the user
         List<JournalEntry> collect = user.getJournalEntry().stream().filter(x -> x.getId().toHexString().equals(myId))
                 .collect(Collectors.toList());
 
@@ -85,10 +85,17 @@ public class JournalEntryControllers {
         }
     }
 
-    @DeleteMapping("/{userName}/{myId}")
-    public ResponseEntity<?> deleteById(@PathVariable String myId, @PathVariable String userName) {
-        journalEntryService.deleteDocumentById(myId, userName);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    @DeleteMapping("/{myId}")
+    public ResponseEntity<?> deleteById(@PathVariable String myId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userName = authentication.getName();
+        boolean removed = journalEntryService.deleteById(myId, userName);
+        if (removed) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
     }
 
     @PutMapping("/updateJournal/{id}/{userName}")
