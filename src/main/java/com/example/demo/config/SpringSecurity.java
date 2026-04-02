@@ -25,7 +25,10 @@ public class SpringSecurity {
 
     @Bean
     public SecurityFilterChain securityFilterChain_falana(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(auth -> auth.requestMatchers("/journal/**","/user/**").authenticated()
+        http.authorizeHttpRequests(auth -> auth
+            .requestMatchers("/journal/**","/user/**").authenticated()
+            //! Role comes from the authenticationProvider Bean — Spring Security fetches the role from there
+            .requestMatchers("/admin/**").hasRole("ADMIN")
                 .anyRequest().permitAll()
             )
             .httpBasic(Customizer.withDefaults());
@@ -39,11 +42,21 @@ public class SpringSecurity {
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        //! Here we are setting the UserDetailsService that returns a UserDetails object containing the user's roles
         provider.setUserDetailsService(userDetailsServiceImpl);
         provider.setPasswordEncoder(passwordEncoder());
         return provider;
     }
 
+    // Authentication flow:
+    // 1. Request hits Spring Security
+    // 2. AuthenticationManager receives the credentials (entry point)
+    //       ↓
+    // 3. Delegates to DaoAuthenticationProvider (our @Bean below)
+    //       ↓
+    // 4. DaoAuthenticationProvider calls UserDetailsServiceImpl → fetches user from DB
+    //       ↓
+    // 5. passwordEncoder (BCrypt) verifies the raw password against the hashed one in DB
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
