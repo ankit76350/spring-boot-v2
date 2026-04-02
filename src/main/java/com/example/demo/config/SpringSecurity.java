@@ -25,7 +25,7 @@ public class SpringSecurity {
 
     @Bean
     public SecurityFilterChain securityFilterChain_falana(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(auth -> auth.requestMatchers("/journal/**").authenticated()
+        http.authorizeHttpRequests(auth -> auth.requestMatchers("/journal/**","/user/**").authenticated()
                 .anyRequest().permitAll()
             )
             .httpBasic(Customizer.withDefaults());
