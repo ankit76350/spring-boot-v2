@@ -98,14 +98,29 @@ public class JournalEntryControllers {
 
     }
 
-    @PutMapping("/updateJournal/{id}/{userName}")
-    public ResponseEntity<JournalEntry> updateEntry(@PathVariable String id, @PathVariable String userName,
-            @RequestBody JournalEntry myEntry) {
-
-        Optional<JournalEntry> updated = journalEntryService.saveNewEntry(id, myEntry);
-        if (updated.isPresent()) {
-            return new ResponseEntity<>(updated.get(), HttpStatus.OK);
+    @PutMapping("/updateJournal/{id}")
+    public ResponseEntity<JournalEntry> updateEntry(@PathVariable String id, @RequestBody JournalEntry myEntry) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userName = authentication.getName();
+        User user = userService.findByUserName(userName);
+        if (user == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+        List<JournalEntry> collect = user.getJournalEntry().stream().filter(x -> x.getId().toHexString().equals(id))
+                .collect(Collectors.toList());
+
+        if (!collect.isEmpty()) {
+            // if the id exist in the user then return to requested user.
+            Optional<JournalEntry> entryFind = journalEntryService.findDocumentById(id);
+
+            if (entryFind.isPresent()) {
+                Optional<JournalEntry> updated = journalEntryService.saveNewEntry(id, myEntry);
+                if (updated.isPresent()) {
+                    return new ResponseEntity<>(updated.get(), HttpStatus.OK);
+                }
+            }
+        }
+
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
     }
