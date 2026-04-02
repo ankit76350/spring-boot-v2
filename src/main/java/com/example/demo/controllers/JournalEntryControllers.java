@@ -2,6 +2,7 @@ package com.example.demo.controllers;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -39,10 +40,22 @@ public class JournalEntryControllers {
 
     @GetMapping("/id/{myId}")
     public ResponseEntity<JournalEntry> findDocumentById(@PathVariable String myId) {
-        Optional<JournalEntry> entryFind = journalEntryService.findDocumentById(myId);
-        if (entryFind.isPresent()) {
-            return new ResponseEntity<>(entryFind.get(), HttpStatus.OK);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userName = authentication.getName();
+        User user = userService.findByUserName(userName);
+        //find if the id exist in the user
+        List<JournalEntry> collect = user.getJournalEntry().stream().filter(x -> x.getId().toHexString().equals(myId))
+                .collect(Collectors.toList());
+
+        if (!collect.isEmpty()) {
+            // if the id exist in the user then return to requested user.
+            Optional<JournalEntry> entryFind = journalEntryService.findDocumentById(myId);
+
+            if (entryFind.isPresent()) {
+                return new ResponseEntity<>(entryFind.get(), HttpStatus.OK);
+            }
         }
+
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 

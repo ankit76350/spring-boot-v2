@@ -1,6 +1,5 @@
 package com.example.demo.controllers;
 
-
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.demo.entity.User;
 import com.example.demo.services.UserService;
 
-
 @RestController
 @RequestMapping("/user")
 public class UserControllers {
@@ -27,14 +25,12 @@ public class UserControllers {
     private UserService userService;
 
     @GetMapping("/all")
-    public List<User> getAllUsers(){
+    public List<User> getAllUsers() {
         return userService.getAll();
     }
 
-
-
     @PutMapping("/updateUser")
-    public ResponseEntity<?> updateUser(@RequestBody User user){
+    public ResponseEntity<?> updateUser(@RequestBody User user) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userName = authentication.getName();
         User userInDb = userService.findByUserName(userName);
@@ -42,23 +38,20 @@ public class UserControllers {
         if (userInDb != null) {
             userInDb.setUserName(user.getUserName());
             userInDb.setPassword(user.getPassword());
-            userService.save(userInDb);
+            userService.saveUser(userInDb);
         }
- 
+
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-
     @DeleteMapping("/delete")
-    public ResponseEntity<?> deleteUser(){
+    public ResponseEntity<?> deleteUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userName = authentication.getName();
         userService.deleteUser(userName);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 
-
     }
-
 
 }
