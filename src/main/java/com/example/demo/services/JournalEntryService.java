@@ -7,6 +7,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +23,8 @@ public class JournalEntryService {
     @Autowired
     private UserService userService;
 
+
+
     @Transactional
     public void saveNewEntry(JournalEntry entry, String userName) {
         try {
@@ -32,6 +36,7 @@ public class JournalEntryService {
             userService.saveUser(user);
         } catch (Exception e) {
             System.out.println(e);
+
             throw new RuntimeException("An error occured while saving the entry:", e);
         }
     }

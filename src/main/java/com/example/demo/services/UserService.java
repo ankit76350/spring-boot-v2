@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.bson.types.ObjectId;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -14,10 +16,14 @@ import org.springframework.stereotype.Component;
 
 import com.example.demo.repositories.UserRepository;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Component
+@Slf4j
 public class UserService {
     @Autowired
     private UserRepository userRepository;
+    // private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     private static final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
@@ -33,7 +39,17 @@ public class UserService {
             userRepository.save(entry);
             return true;
         } catch (Exception e) {
-            // TODO: handle exception
+            // log.error("Error occurred for {} :",entry.getUserName(), e);
+            // logger.error("error-error-error-error-error-error",e);
+            // logger.warn("warn-warn-warn-warn-warn-warn-warn-warn");
+            // logger.info("info-info-info-info-info-info-info-info");
+            // logger.debug("debug-debug-debug-debug-debug-debug-debug");
+            // logger.trace("trace-trace-trace-trace-trace-trace-trace");
+            log.error("error-error-error-error-error-error");
+            log.warn("warn-warn-warn-warn-warn-warn-warn-warn");
+            log.info("info-info-info-info-info-info-info-info");
+            log.debug("debug-debug-debug-debug-debug-debug-debug");
+            // log.trace("trace-trace-trace-trace-trace-trace-trace");
             return false;
         }
     }
