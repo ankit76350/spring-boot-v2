@@ -1,0 +1,26 @@
+<configuration>
+
+    <appender name="myConsoleAppender" class="ch.qos.logback.core.ConsoleAppender">
+        <!-- WRONG: class= "ch.qos.logback.core.ConsoleAppnder"  — typo: "Appnder" should be "Appender" -->
+        <!-- WRONG: missing <encoder> — without it, logback has no format and prints nothing -->
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-50level %logger{36} ---- %msg %n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="myFileAppender" class="ch.qos.logback.core.FileAppender">
+        <file>
+         demo.log <!-- log file path -->
+        </file> 
+        <!-- WRONG: missing <encoder> — without it, nothing gets written to the file -->
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="myConsoleAppender"/>
+        <appender-ref ref="myFileAppender"/>
+    </root>
+
+</configuration>
