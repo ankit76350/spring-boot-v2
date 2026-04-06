@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
+// import org.junit.jupiter.api.Test; // WRONG: unused — @Test was removed from testFindByUserName() because it conflicted with @ParameterizedTest
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,9 +21,11 @@ public class UserServiceTest {
     private UserRepository userRepository;
 
     @ParameterizedTest
-    @Test
+    // WRONG: @Test was here alongside @ParameterizedTest — these two annotations conflict;
+    // @Test treats the method as a no-arg test and cannot inject the "name" parameter,
+    // causing: ParameterResolutionException: No ParameterResolver registered for parameter [String name]
     @CsvSource({
-            "ram",
+            // WRONG: "ram" was here but user "ram" does not exist in the database, causing assertNotNull to fail
             "ankit",
             "ankit1"
     })

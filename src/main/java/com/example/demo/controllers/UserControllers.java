@@ -14,8 +14,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.api.response.WeatherResponse;
 import com.example.demo.entity.User;
 import com.example.demo.services.UserService;
+import com.example.demo.services.WeatherService;
 
 @RestController
 @RequestMapping("/user")
@@ -23,6 +25,10 @@ public class UserControllers {
 
     @Autowired
     private UserService userService;
+
+    // WRONG: weatherService was used in greeting() but never declared or injected — caused NoSuchBeanDefinitionException
+    @Autowired
+    private WeatherService weatherService;
 
     @GetMapping("/all")
     public List<User> getAllUsers() {
@@ -52,6 +58,18 @@ public class UserControllers {
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 
+    }
+    // WRONG: @DeleteMapping("/user") — this mapped GET requests from the browser to a DELETE endpoint, causing 405 Method Not Allowed
+    @GetMapping("")
+    public ResponseEntity<?> greeting() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userName = authentication.getName();
+        WeatherResponse weatherResponse = weatherService.getWeather("Mumbai");
+        String greeting = "";
+        if (weatherResponse != null) {
+            greeting = " Weather feels like " + weatherResponse.getCurrent().getFeelslike();
+        }
+        return new ResponseEntity<>("Hi "+ userName + greeting,   HttpStatus.OK);
     }
 
 }
