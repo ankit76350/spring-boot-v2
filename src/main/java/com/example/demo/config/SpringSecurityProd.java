@@ -19,20 +19,15 @@ import com.example.demo.services.UserDetailsServiceImpl;
 
 @Configuration
 @EnableWebSecurity
-@Profile("dev")
-public class SpringSecurity {
+@Profile("prod")
+public class SpringSecurityProd {
 
     @Autowired
     private UserDetailsServiceImpl userDetailsServiceImpl;
 
     @Bean
     public SecurityFilterChain securityFilterChain_falana(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(auth -> auth
-            .requestMatchers("/journal/**","/user/**").authenticated()
-            //! Role comes from the authenticationProvider Bean — Spring Security fetches the role from there
-            .requestMatchers("/admin/**").hasRole("ADMIN")
-                .anyRequest().permitAll()
-            )
+        http.authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
             .httpBasic(Customizer.withDefaults());
 
         http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
