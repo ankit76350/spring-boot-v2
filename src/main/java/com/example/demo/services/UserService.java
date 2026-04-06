@@ -25,10 +25,17 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public void saveNewUser(User entry) {
-        entry.setPassword(passwordEncoder.encode(entry.getPassword()));
-        entry.setRoles(Arrays.asList("USERS"));
-        userRepository.save(entry);
+    public boolean saveNewUser(User entry) {
+
+        try {
+            entry.setPassword(passwordEncoder.encode(entry.getPassword()));
+            entry.setRoles(Arrays.asList("USERS"));
+            userRepository.save(entry);
+            return true;
+        } catch (Exception e) {
+            // TODO: handle exception
+            return false;
+        }
     }
 
     public void saveAdmin(User entry) {
