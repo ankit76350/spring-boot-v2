@@ -19,7 +19,6 @@ import com.example.demo.services.UserDetailsServiceImpl;
 
 @Configuration
 @EnableWebSecurity
-@Profile("dev")
 public class SpringSecurity {
 
     @Autowired
