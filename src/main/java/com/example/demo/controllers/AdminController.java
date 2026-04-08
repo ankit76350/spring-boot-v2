@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.cache.AppCache;
 import com.example.demo.entity.User;
 import com.example.demo.services.UserService;
 
@@ -20,6 +21,8 @@ public class AdminController {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private AppCache appCache;
 
     @GetMapping("/all-users")
     public ResponseEntity<?> getAllUsers() {
@@ -37,5 +40,11 @@ public class AdminController {
       
         userService.saveAdmin(user);
         return null;
+    }
+
+    @GetMapping("/clear-app-cache")
+    public String clearAppCache(){
+        appCache.init(); // ERROR: 'appCache' is not defined — no field or bean exists in this class
+        return "Done"; // FIX: added missing semicolon
     }
 }
